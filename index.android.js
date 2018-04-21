@@ -35,10 +35,7 @@ componentDidMount(){
 )
 //alert(this.state.fotos)
   
-  
-}
-
-
+  }
 
 
   render() {

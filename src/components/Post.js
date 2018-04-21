@@ -20,7 +20,6 @@ export default class Post extends Component {
     }
   }
 
-
   carregaIcone(likeada){
     return likeada ? require('../../resources/img/s2-checked.png')
     : require('../../resources/img/s2.png')
@@ -49,7 +48,7 @@ export default class Post extends Component {
   }
 
   exibeLikes=(likers)=>{
-    if(likers.length<1)
+    if(likers.length>=0)
     return
 
     return(
@@ -100,7 +99,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center'
   },
-
+  
   profilePicture: {
     marginRight: 10,
     width: 40,
