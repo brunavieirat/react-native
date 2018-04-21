@@ -20,7 +20,6 @@ export default class Post extends Component {
     }
   }
 
-
   carregaIcone(likeada){
     return likeada ? require('../../resources/img/s2-checked.png')
     : require('../../resources/img/s2.png')
@@ -49,7 +48,7 @@ export default class Post extends Component {
   }
 
   exibeLikes=(likers)=>{
-    if(likers.length <1)
+    if(likers.length>=0)
     return
 
     return(
@@ -58,7 +57,7 @@ export default class Post extends Component {
     )
   }
 
-  exibeLegenda=(foto) =>{
+  /* exibeLegenda=(foto) =>{
     if(foto.comentario ==='')
     return
 
@@ -69,7 +68,7 @@ export default class Post extends Component {
 
       </View>
     )
-  }
+  } */
 
 
   render() {
@@ -97,10 +96,9 @@ export default class Post extends Component {
           </TouchableOpacity>
 
         {this.exibeLikes(foto.likers)}
-        
+      {/*   {this.exibeLegenda(foto)} */}
          
         </View>
-        {this.exibeLegenda(foto)}
       </View>
     )
   }
@@ -134,14 +132,12 @@ const styles = StyleSheet.create({
   },
 
   rodape: {
-    margin: 10,
-    flexDirection: 'row'
+    margin: 10
   },
 
   curtidas: {
     fontWeight: 'bold'
   },
-
 
   comentario: {
     flexDirection: 'row'
