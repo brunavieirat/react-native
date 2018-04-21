@@ -68,7 +68,7 @@ componentDidMount(){
         keyExtractor={item => item.id}
         renderItem={({ item }) =>
 
-         <Post foto={item} />
+         <Post fotos={item} />
 
         }
       />
