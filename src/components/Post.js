@@ -14,31 +14,31 @@ import {
 
 export default class Post extends Component {
 
-  constructor(props){
+  constructor(props) {
     super(props)
-    this.state ={
+    this.state = {
       foto: this.props.foto,
       valorComentario: ''
     }
   }
 
 
-  carregaIcone(likeada){
+  carregaIcone(likeada) {
     return likeada ? require('../../resources/img/s2-checked.png')
-    : require('../../resources/img/s2.png')
+      : require('../../resources/img/s2.png')
   }
 
-  like = () =>{
+  like = () => {
 
-    let novaLista= []
-    if(!this.state.foto.likeada)
-    novaLista = [
-      ...this.state.foto.likers,
-      {login: 'brunavieira'}
-    ]
+    let novaLista = []
+    if (!this.state.foto.likeada)
+      novaLista = [
+        ...this.state.foto.likers,
+        { login: 'brunavieira' }
+      ]
     else
-    novaLista = this.state.foto.likers
-    .filter(liker => liker.login != 'brunavieira')
+      novaLista = this.state.foto.likers
+        .filter(liker => liker.login != 'brunavieira')
 
     const fotoAtualizada = {
       ...this.state.foto,
@@ -50,33 +50,52 @@ export default class Post extends Component {
     })
   }
 
-  exibeLikes=(likers)=>{
-    if(likers.length <1)
-    return
+  exibeLikes = (likers) => {
+    if (likers.length < 1)
+      return
 
-    return(
+    return (
 
       <Text style={styles.curtidas}> {likers.length} curtidas </Text>
     )
   }
 
-  exibeLegenda=(foto) =>{
-    if(foto.comentario ==='')
-    return
+  exibeLegenda = (foto) => {
+    if (foto.comentario === '')
+      return
 
-    return(
+    return (
       <View style={styles.comentario}>
-      <Text style={styles.tituloComentario}>{foto.loginUsuario}</Text>
-      <Text> {foto.comentario}</Text>
+        <Text style={styles.tituloComentario}>{foto.loginUsuario}</Text>
+        <Text> {foto.comentario}</Text>
 
       </View>
     )
   }
 
-adicionaComentario = () =>{
+  adicionaComentario = () => {
 
+    if(this.state.valorComentario==='')
+    return
 
-}  
+    const novaLista = [...this.state.foto.comentarios, {
+      id: this.state.valorComentario,
+      login: 'meuUsuario',
+      texto: this.state.valorComentario
+    }]
+    
+
+      const fotoAtualizada ={
+        ...this.state.foto,
+        comentarios: novaLista
+      }
+
+      this.setState({foto: fotoAtualizada, valorComentario:''})
+
+    
+    this.inputComentario.clear();
+
+  }
 
 
   render() {
@@ -103,32 +122,35 @@ adicionaComentario = () =>{
 
           </TouchableOpacity>
 
-        {this.exibeLikes(foto.likers)}
-       
-       <View>
-        {this.exibeLegenda(foto)}
-        
+          {this.exibeLikes(foto.likers)}
 
-      {foto.comentarios.map(comentario =>
-        <View style={styles.comentario} key={comentario.id}>
-        <Text style={styles.tituloComentario}>{comentario.login}</Text>
-        <Text> {comentario.texto}</Text>
-  
+          <View>
+            {this.exibeLegenda(foto)}
+
+
+            {foto.comentarios.map(comentario =>
+              <View style={styles.comentario} key={comentario.id}>
+                <Text style={styles.tituloComentario}>{comentario.login}</Text>
+                <Text> {comentario.texto}</Text>
+
+              </View>
+
+            )}
+
+          </View>
+
+          <View style={styles.novoComentario}>
+            <TextInput style={styles.input}
+              placeholder="Adicione um comentario..."
+              ref={input => this.inputComentario = input}
+              onChangeText={texto => this.setState({ valorComentario: texto })}
+            />
+            <TouchableOpacity onPress={this.adicionaComentario}>
+              <Image style={styles.icone}
+                source={require('../../resources/img/send.png')} />
+            </TouchableOpacity>
+          </View>
         </View>
-        
-        )} 
-         
-        </View>
-
-        <TextInput style={styles.input}
-        placeholder="Adicione um comentario..." 
-        ref={input => this.inputComentario = input}
-       // onChangeText={texto=>this.setState({valorComentario: text})}
-         />
-
-        <Image style={styles.icone}
-        source={require('../../resources/img/send.png')}/>
-      </View>
       </View>
     )
   }
@@ -143,7 +165,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center'
   },
-  
+
   profilePicture: {
     marginRight: 10,
     width: 40,
@@ -163,13 +185,13 @@ const styles = StyleSheet.create({
 
   rodape: {
     margin: 10,
-    
+
   },
 
   curtidas: {
     fontWeight: 'bold',
-    
-   
+
+
   },
 
 
@@ -184,11 +206,12 @@ const styles = StyleSheet.create({
   },
 
   input: {
+    flex: 1,
     height: 40
   },
 
   icone: {
-    height:30,
+    height: 30,
     width: 30
   },
 
