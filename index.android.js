@@ -29,7 +29,6 @@ export default class InstaluraMobile extends Component {
 
 componentDidMount(){
   fetch('https://instalura-api.herokuapp.com/api/public/fotos/rafael')
- //fetch('http://192.168.22.62:8080/api/public/fotos/rafael')
   .then(response=> response.json())
   .then(json => this.setState({fotos:json})
 )

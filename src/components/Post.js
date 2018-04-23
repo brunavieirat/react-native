@@ -7,7 +7,8 @@ import {
   Image,
   Dimensions,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
+  TextInput
 } from 'react-native';
 
 
@@ -16,7 +17,8 @@ export default class Post extends Component {
   constructor(props){
     super(props)
     this.state ={
-      foto: this.props.foto
+      foto: this.props.foto,
+      valorComentario: ''
     }
   }
 
@@ -71,6 +73,11 @@ export default class Post extends Component {
     )
   }
 
+adicionaComentario = () =>{
+
+
+}  
+
 
   render() {
 
@@ -97,10 +104,31 @@ export default class Post extends Component {
           </TouchableOpacity>
 
         {this.exibeLikes(foto.likers)}
+       
+       <View>
+        {this.exibeLegenda(foto)}
         
+
+      {foto.comentarios.map(comentario =>
+        <View style={styles.comentario} key={comentario.id}>
+        <Text style={styles.tituloComentario}>{comentario.login}</Text>
+        <Text> {comentario.texto}</Text>
+  
+        </View>
+        
+        )} 
          
         </View>
-        {this.exibeLegenda(foto)}
+
+        <TextInput style={styles.input}
+        placeholder="Adicione um comentario..." 
+        ref={input => this.inputComentario = input}
+       // onChangeText={texto=>this.setState({valorComentario: text})}
+         />
+
+        <Image style={styles.icone}
+        source={require('../../resources/img/send.png')}/>
+      </View>
       </View>
     )
   }
@@ -135,20 +163,40 @@ const styles = StyleSheet.create({
 
   rodape: {
     margin: 10,
-    flexDirection: 'row'
+    
   },
 
   curtidas: {
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    
+   
   },
 
 
   comentario: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    marginLeft: 5
   },
+
   tituloComentario: {
     fontWeight: 'bold',
     marginRight: 5
+  },
+
+  input: {
+    height: 40
+  },
+
+  icone: {
+    height:30,
+    width: 30
+  },
+
+  novoComentario: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd'
   }
 
 });
