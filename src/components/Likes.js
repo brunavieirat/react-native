@@ -2,11 +2,12 @@ import React, { Component } from 'react'
 import {
     StyleSheet,
     View,
+    Text,
     Image,
     TouchableOpacity,
 } from 'react-native';
 
-export default class Likes extends Component {
+export default class Like extends Component {
 
 
     carregaIcone(likeada) {
@@ -25,11 +26,11 @@ export default class Likes extends Component {
     }
 
     render() {
-
+        const {foto, likeCallBack} = this.props;
         return (
 
             <View>
-                <TouchableOpacity onPress={this.like}>
+                <TouchableOpacity onPress={likeCallBack}>
                     <Image style={styles.likeButton}
                         source={this.carregaIcone(foto.likeada)}
                     />

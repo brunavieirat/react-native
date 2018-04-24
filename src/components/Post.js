@@ -11,6 +11,7 @@ import {
   TextInput
 } from 'react-native';
 import InputComentario from './InputComentario'
+import Like from './Likes'
 
 
 export default class Post extends Component {
@@ -96,8 +97,9 @@ export default class Post extends Component {
           style={styles.postImage} />
 
         <View style={styles.rodape}>          
-
+        
           <View>
+          <Like foto={foto} likeCallBack={this.like} />
             {this.exibeLegenda(foto)}
 
             {foto.comentarios.map(comentario =>
