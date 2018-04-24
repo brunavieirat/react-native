@@ -37,6 +37,33 @@ componentDidMount(){
   
   }
 
+  like = (idFoto) => {
+
+    const foto = this.state.fotos.find(foto => foto.id === idFoto)
+
+    let novaLista = []
+    if (!foto.likeada)
+      novaLista = [
+        ...foto.likers,
+        { login: 'brunavieira' }
+      ]
+    else
+      novaLista = foto.likers
+        .filter(liker => liker.login != 'brunavieira')
+
+    const fotoAtualizada = {
+      ...foto,
+      likeada: !foto.likeada,
+      likers: novaLista
+    }
+
+    const fotos = this.state.fotos.map(foto => foto.id === fotoAtualizada.id ? fotoAtualizada : foto)
+
+    this.setState({
+      fotos
+    })
+  }
+
 
   render() {
 
@@ -65,7 +92,8 @@ componentDidMount(){
         keyExtractor={item => item.id}
         renderItem={({ item }) =>
 
-         <Post foto={item} />
+         <Post foto={item} 
+         likeCallBack={this.like}/>
 
         }
       />

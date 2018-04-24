@@ -24,27 +24,7 @@ export default class Post extends Component {
     }
   }
 
-  like = () => {
-
-    let novaLista = []
-    if (!this.state.foto.likeada)
-      novaLista = [
-        ...this.state.foto.likers,
-        { login: 'brunavieira' }
-      ]
-    else
-      novaLista = this.state.foto.likers
-        .filter(liker => liker.login != 'brunavieira')
-
-    const fotoAtualizada = {
-      ...this.state.foto,
-      likeada: !this.state.foto.likeada,
-      likers: novaLista
-    }
-    this.setState({
-      foto: fotoAtualizada
-    })
-  }
+  
  
 
   exibeLegenda = (foto) => {
@@ -81,8 +61,9 @@ export default class Post extends Component {
 
 
   render() {
+    const {foto, likeCallBack} = this.props
 
-    const { foto } = this.state
+   // const { foto } = this.state
 
     return (
 
@@ -99,7 +80,7 @@ export default class Post extends Component {
         <View style={styles.rodape}>          
         
           <View>
-          <Like foto={foto} likeCallBack={this.like} />
+          <Like foto={foto} likeCallBack={() => likeCallBack(foto.id)} />
             {this.exibeLegenda(foto)}
 
             {foto.comentarios.map(comentario =>
