@@ -20,21 +20,21 @@ import {
 
 export default class InstaluraMobile extends Component {
 
-  constructor(){
+  constructor() {
     super()
-    this.state ={
-      fotos:[]
+    this.state = {
+      fotos: []
     }
   }
 
-componentDidMount(){
- fetch('https://instalura-api.herokuapp.com/api/public/fotos/rafael')
-  //fetch('http://10.0.2.2:8080/api/fotos/rafael')
-  .then(response=> response.json())
-  .then(json => this.setState({fotos:json})
-)
-//alert(this.state.fotos)
-  
+  componentDidMount() {
+    fetch('https://instalura-api.herokuapp.com/api/public/fotos/rafael')
+      //fetch('http://10.0.2.2:8080/api/fotos/rafael')
+      .then(response => response.json())
+      .then(json => this.setState({ fotos: json })
+      )
+    //alert(this.state.fotos)
+
   }
 
   like = (idFoto) => {
@@ -64,6 +64,33 @@ componentDidMount(){
     })
   }
 
+  adicionaComentario = (idFoto, valorComentario) => {
+
+    if (valorComentario === '')
+      return
+
+    const foto = this.state.fotos.find(foto => foto.id === idFoto)
+
+
+
+    const novaLista = [...foto.comentarios, {
+      id: valorComentario,
+      login: 'meuUsuario',
+      texto: valorComentario
+    }]
+
+
+    const fotoAtualizada = {
+      ...foto,
+      comentarios: novaLista
+    }
+
+    const fotos = this.state.fotos.map(foto => foto.id === fotoAtualizada.id ? fotoAtualizada : foto)
+
+    this.setState({ fotos })
+  }
+
+
 
   render() {
 
@@ -92,8 +119,9 @@ componentDidMount(){
         keyExtractor={item => item.id}
         renderItem={({ item }) =>
 
-         <Post foto={item} 
-         likeCallBack={this.like}/>
+          <Post foto={item}
+            likeCallBack={this.like} 
+            comentarioCallBack={this.adicionaComentario}/>
 
         }
       />

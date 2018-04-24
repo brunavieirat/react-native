@@ -16,13 +16,13 @@ import Like from './Likes'
 
 export default class Post extends Component {
 
-  constructor(props) {
+  /* /* constructor(props) {
     super(props)
     this.state = {
       foto: this.props.foto,
 
-    }
-  }
+    } 
+  } */
 
   
  
@@ -40,28 +40,10 @@ export default class Post extends Component {
     )
   }
 
-  adicionaComentario = (valorComentario) => {
-
-    if (valorComentario === '')
-      return
-
-    const novaLista = [...this.state.foto.comentarios, {
-      id: valorComentario,
-      login: 'meuUsuario',
-      texto: valorComentario
-    }]
-
-
-    const fotoAtualizada = {
-      ...this.state.foto,
-      comentarios: novaLista
-    }
-    this.setState({ foto: fotoAtualizada })
-  }
-
+  
 
   render() {
-    const {foto, likeCallBack} = this.props
+    const {foto, likeCallBack, comentarioCallBack} = this.props
 
    // const { foto } = this.state
 
@@ -95,7 +77,8 @@ export default class Post extends Component {
           </View>
 
           <InputComentario
-            adicionaComentario={this.adicionaComentario}
+            idFoto={foto.id}
+            comentarioCallBack={comentarioCallBack}
           />
 
         </View>
