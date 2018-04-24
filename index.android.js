@@ -37,9 +37,27 @@ export default class InstaluraMobile extends Component {
 
   }
 
+  buscaporId=(idFoto)=>{
+    const foto = this.state.fotos.find(foto => foto.id === idFoto)
+   // console.warn(foto)
+    return foto
+
+  }
+
+  atualizaFotos(fotoAtualizada){
+    const fotos = this.state.fotos.map(foto => foto.id === fotoAtualizada.id ? fotoAtualizada : foto)
+
+    return fotos
+  }
+
   like = (idFoto) => {
 
-    const foto = this.state.fotos.find(foto => foto.id === idFoto)
+  //  const foto = this.state.fotos.find(foto => foto.id === idFoto)
+
+  //buscaporId(idFoto)
+  //  console.warn(idFoto)
+ // console.warn(this.buscaporId(idFoto))
+  const foto = this.buscaporId(idFoto)
 
     let novaLista = []
     if (!foto.likeada)
@@ -57,8 +75,7 @@ export default class InstaluraMobile extends Component {
       likers: novaLista
     }
 
-    const fotos = this.state.fotos.map(foto => foto.id === fotoAtualizada.id ? fotoAtualizada : foto)
-
+    const fotos = this.atualizaFotos(fotoAtualizada)
     this.setState({
       fotos
     })
@@ -69,7 +86,9 @@ export default class InstaluraMobile extends Component {
     if (valorComentario === '')
       return
 
-    const foto = this.state.fotos.find(foto => foto.id === idFoto)
+      const foto = this.buscaporId(idFoto)
+
+   // const foto = this.state.fotos.find(foto => foto.id === idFoto)
 
 
 
@@ -85,8 +104,8 @@ export default class InstaluraMobile extends Component {
       comentarios: novaLista
     }
 
-    const fotos = this.state.fotos.map(foto => foto.id === fotoAtualizada.id ? fotoAtualizada : foto)
-
+   // const fotos = this.state.fotos.map(foto => foto.id === fotoAtualizada.id ? fotoAtualizada : foto)
+      const fotos= this.atualizaFotos(fotoAtualizada)
     this.setState({ fotos })
   }
 
