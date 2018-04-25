@@ -8,6 +8,7 @@ import {
     Dimensions,
     ScrollView,
     Button,
+    AsyncStorage,
     TextInput
 } from 'react-native';
 
@@ -17,7 +18,8 @@ export default class Login extends Component {
         super()
         this.state = {
             usuario: '',
-            senha: ''
+            senha: '',
+            validacao: ''
         }
     }
 
@@ -27,7 +29,7 @@ export default class Login extends Component {
             method: 'POST',
             body: JSON.stringify({
                 login: this.state.usuario,
-                senha: this.state.senha
+                senha: this.state.senha,
             }),
             headers: new Headers({
                 "Content-type": "application/json"
@@ -35,9 +37,9 @@ export default class Login extends Component {
 
         }
 
-        const uri='https://instalura-api.herokuapp.com/api/public/login'
+        const uri = 'https://instalura-api.herokuapp.com/api/public/login'
 
-      //  const uri = 'http://192.168.0.137:8080/api/public/login'
+        //  const uri = 'http://192.168.0.137:8080/api/public/login'
 
         fetch(uri, request)
             .then(response => {
@@ -45,9 +47,32 @@ export default class Login extends Component {
                     throw new Error('Não deu certo. Arruma!');
                 return response.text()
             })
-            .then(token => console.warn(token))
-            .catch(error => {
+            .then(token => {
+                const usuario = {
+                    nome: this.state.usuario,
+                    token
+                }
+
+                //console.warn(token)
+                AsyncStorage.setItem('usuario', JSON.stringify(usuario))
+                console.warn('hsudhsuh')
+                //    AsyncStorage.setItem('usuario', this.state.usuario)
+
+                /*  AsyncStorage.getItem('usuario')
+                 .then(usuarioStringfied =>{JSON.parse(usuarioStringfied)})
+                 .then(usuario =>{console.warn(usuario.nome)}) */
             })
+            .catch(error => {
+                this.setState({ validacao: error.message })
+            })
+    }
+
+    efetuaLogout = () => {
+
+        AsyncStorage.removeItem('token')
+        AsyncStorage.removeItem('usuario')
+
+
     }
 
     render() {
@@ -68,9 +93,12 @@ export default class Login extends Component {
                         placeholder="Digite sua senha"
                         onChangeText={texto => this.setState({ senha: texto })}
                     />
-
-                    <Button title="Login"
+                    <Text style={styles.erro}> {this.state.validacao} </Text>
+                    <Button style={styles.login}
+                        title="Login"
                         onPress={this.efetuaLogin} />
+                    <Button title="Logout"
+                        onPress={this.efetuaLogout} />
                 </View>
             </View>
 
@@ -91,6 +119,14 @@ const styles = StyleSheet.create({
     },
     form: {
         width: Dimensions.get('screen').width * 0.8
+    },
+    erro: {
+        color: 'red',
+        fontWeight: 'bold',
+        margin: 10
+    },
+    login: {
+        marginBottom: 110
     }
 
 })
