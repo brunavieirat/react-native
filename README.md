@@ -1,6 +1,6 @@
 # react-native
 
-Instalura
+Instalura - Instagram
 
 Projeto desenvolvido no Curso de React Native da Caelum / GamaAcademy
 
