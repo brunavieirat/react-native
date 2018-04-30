@@ -1,148 +1,134 @@
 import React, { Component } from 'react';
 import {
-  StyleSheet,
-  Text,
-  TextInput,
-  Button,
-  Image,
-  View,
-  Dimensions,
-  AsyncStorage,
-  ActivityIndicator
+    AppRegistry,
+    StyleSheet,
+    Text,
+    View,
+    Image,
+    Dimensions,
+    ScrollView,
+    Button,
+    AsyncStorage,
+    TextInput
 } from 'react-native';
 
 export default class Login extends Component {
 
-  constructor() {
-    super();
-    this.state = {
-      usuario: '',
-      senha: '',
-      mensagem: '',
-      loading: true,
-    }
-  }
-
-  componentWillMount() {
-    AsyncStorage.getItem('token')
-      .then(token => {
-        if(token)
-          this.redireciona();
-        else
-          this.setState({loading: false})
-      });
-  }
-
-  redireciona() {
-    this.props.navigator.resetTo({
-      screen: 'Timeline',
-      title: 'Instalura',
-    });
-  }
-
-  efetuaLogin() {
-    const uri = 'http://localhost:8080/api/public/login';
-    const requestInfo = {
-      method: 'POST',
-      body: JSON.stringify({
-        login: this.state.usuario,
-        senha: this.state.senha
-      }),
-      headers: new Headers({
-        'Content-type': 'application/json'
-      })
-    };
-
-    fetch(uri, requestInfo)
-      .then(response => {
-        if (response.ok)
-          return response.text();
-
-        throw 'Não foi possível efetuar login';
-      })
-      .then(token => {
-        AsyncStorage.setItem('token', token);
-        AsyncStorage.setItem('usuario', this.state.usuario);
-        this.redireciona();
-      })
-      .catch(erro => this.setState({mensagem: erro}));
-  }
-
-  render() {
-    if(this.state.loading) {
-      return (
-        <View style={styles.container}>
-          <ActivityIndicator
-              animating={true}
-              color="#2980b9"
-              size="large" />
-          <Text style={styles.loading}>Loading...</Text>
-        </View>
-      );
+    constructor() {
+        super()
+        this.state = {
+            usuario: '',
+            senha: '',
+            validacao: ''
+        }
     }
 
-    return (
-      <View style={styles.container}>
+    efetuaLogin = () => {
 
-        <Image style={styles.logo}
-            source={require('../../resources/img.instalura.png')}
-            resizeMode="contain" />
+        const request = {
+            method: 'POST',
+            body: JSON.stringify({
+                login: this.state.usuario,
+                senha: this.state.senha,
+            }),
+            headers: new Headers({
+                "Content-type": "application/json"
+            })
 
-        <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <TextInput placeholder="Usuário"
-                style={styles.input}
-                autoCapitalize="none"
-                onChangeText={texto => this.setState({usuario: texto})} />
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput placeholder="Senha"
-                style={styles.input}
-                autoCapitalize="none"
-                secureTextEntry={true}
-                onChangeText={texto => this.setState({senha: texto})} />
-          </View>
-          <Button title="Login"
-              onPress={this.efetuaLogin.bind(this)}/>
-        </View>
+        }
 
-        <Text style={styles.mensagem}>
-          {this.state.mensagem}
-        </Text>
+        const uri = 'https://instalura-api.herokuapp.com/api/public/login'
 
-      </View>
-    );
-  }
+        //  const uri = 'http://192.168.0.137:8080/api/public/login'
+
+        fetch(uri, request)
+            .then(response => {
+                if (!response.ok)
+                    throw new Error('Não deu certo. Arruma!');
+                return response.text()
+            })
+            .then(token => {
+                const usuario = {
+                    nome: this.state.usuario,
+                    token
+                }
+
+                //console.warn(token)
+                AsyncStorage.setItem('usuario', JSON.stringify(usuario))
+                console.warn('OK')
+                //    AsyncStorage.setItem('usuario', this.state.usuario)
+
+                /*  AsyncStorage.getItem('usuario')
+                 .then(usuarioStringfied =>{JSON.parse(usuarioStringfied)})
+                 .then(usuario =>{console.warn(usuario.nome)}) */
+
+                 //Navegando para o Feed
+            })
+            .catch(error => {
+                this.setState({ validacao: error.message })
+            })
+    }
+
+    efetuaLogout = () => {
+
+        AsyncStorage.removeItem('token')
+        AsyncStorage.removeItem('usuario')
+
+
+    }
+
+    render() {
+
+        return (
+            <View style={styles.container}>
+
+                <Image source={require('../../resources/img/send.png')} />
+                <View style={styles.form}>
+                    <TextInput style={styles.input}
+                        placeholder="Usuário..."
+                        onChangeText={texto => this.setState({ usuario: texto })}
+                    />
+
+                    <TextInput style={styles.input}
+                        autoCapitalize="none"
+                        secureTextEntry={true}
+                        placeholder="Digite sua senha"
+                        onChangeText={texto => this.setState({ senha: texto })}
+                    />
+                    <Text style={styles.erro}> {this.state.validacao} </Text>
+                    <Button style={styles.login}
+                        title="Login"
+                        onPress={this.efetuaLogin} />
+                    <Button title="Logout"
+                        onPress={this.efetuaLogout} />
+                </View>
+            </View>
+
+        )
+    }
 }
 
-const width = Dimensions.get('window').width;
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  logo: {
-    height: 30
-  },
-  form: {
-    width: width * 0.8
-  },
-  inputContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd'
-  },
-  input: {
-    height: 40
-  },
-  mensagem: {
-    marginTop: 15,
-    color: '#e74c3c',
-  },
-  loading: {
-    marginTop: 10,
-    fontWeight: 'bold',
-    fontSize: 20,
-    color: '#95a5a6'
-  }
-});
+    input: {
+        height: 40,
+        // borderBottom: '#ddd'
+
+    },
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    form: {
+        width: Dimensions.get('screen').width * 0.8
+    },
+    erro: {
+        color: 'red',
+        fontWeight: 'bold',
+        margin: 10
+    },
+    login: {
+        marginBottom: 110
+    }
+
+})

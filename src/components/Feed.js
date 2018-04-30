@@ -1,182 +1,144 @@
 import React, { Component } from 'react';
+import Post from './Post'
 import {
-  AsyncStorage,
+  AppRegistry,
   StyleSheet,
-  View,
   Text,
-  TouchableOpacity
+  View,
+  Image,
+  Dimensions,
+  ScrollView,
+  FlatList
 } from 'react-native';
 
-import Post from './Post';
-import UsuarioInfo from './UsuarioInfo';
-import fetchInstaluraApi from '../api/fetchInstaluraApi';
-import exibeNotificacao from '../util/NotificacaoUtils';
 
 export default class Feed extends Component {
 
-  constructor(props) {
-    super(props);
+  constructor() {
+    super()
     this.state = {
-      fotos: [],
-      status: 'NORMAL'
-    }
-    this.props.navigator.setOnNavigatorEvent(this.onNavigate.bind(this));
-  }
-
-  onNavigate(evento) {
-    if(evento.id === 'willAppear')
-      this.carregaFotos();
-  }
-
-  carregaFotos() {
-    fetchInstaluraApi(this.props.uri)
-      .then(fotos => this.setState({fotos, status: 'NORMAL'}))
-      .catch(erro => {
-        this.setState({status: 'FALHA_CARREGAMENTO'});
-      });
-  }
-
-  buscaPorId(idFoto) {
-    return this.state.fotos.find(foto => foto.id === idFoto);
-  }
-
-  atualizaFotos(fotoAtualizada) {
-    const listaAtualizada = this.state.fotos
-        .map(foto => foto.id === fotoAtualizada.id ? fotoAtualizada : foto);
-
-    this.setState({fotos: listaAtualizada});
-  }
-
-  like(idFoto) {
-    const listaOriginal = this.state.fotos;
-    const foto = this.buscaPorId(idFoto);
-
-    AsyncStorage.getItem('usuario')
-      .then(usuario => {
-
-        let novaLista = [];
-        if(!foto.likeada) {
-          novaLista = [
-            ...foto.likers,
-            {login: usuario}
-          ];
-        } else {
-          novaLista = foto.likers.filter(liker => {
-            return liker.login !== usuario;
-          });
-        }
-        return novaLista;
-      })
-      .then(novaLista => {
-        const fotoAtualizada = {
-          ...foto,
-          likeada: !foto.likeada,
-          likers: novaLista
-        };
-        this.atualizaFotos(fotoAtualizada);
-      });
-
-    const uri = `/fotos/${idFoto}/like`;
-    fetchInstaluraApi(uri, 'POST')
-      .catch(erro => {
-        exibeNotificacao(erro);
-        this.setState({fotos: listaOriginal});
-      });
-  }
-
-  comenta(idFoto, valorComentario, inputComentario) {
-    if(valorComentario === '')
-      return;
-
-    const foto = this.buscaPorId(idFoto);
-
-    const uri = `/fotos/${idFoto}/comment`;
-    fetchInstaluraApi(uri, 'POST', {texto: valorComentario})
-      .then(comentario => {
-        const novaLista = [
-          ...foto.comentarios,
-          comentario
-        ];
-        return novaLista;
-      })
-      .then(novaLista => {
-        const fotoAtualizada = {...foto,
-          comentarios: novaLista
-        };
-        this.atualizaFotos(fotoAtualizada);
-      })
-      .catch(erro => {
-        exibeNotificacao(erro);
-      });
-
-      inputComentario.clear();
-  }
-
-  verPerfil(foto) {
-    if(this.props.screen !== 'Timeline')
-      return;
-
-    this.props.navigator.push({
-      screen: 'PerfilUsuario',
-      title: foto.loginUsuario,
-      backButtonTitle: '',
-      passProps: {
-        usuario: foto.loginUsuario,
-        fotoDoPerfil: foto.urlPerfil
-      }
-    });
-  }
-
-  exibeUsuarioInfo() {
-    if(this.props.screen !== 'Timeline') {
-      return (
-        <UsuarioInfo
-            posts={this.state.fotos.length}
-            {...this.props} />
-      );
+      fotos: []
     }
   }
+
+  componentDidMount() {
+    fetch('https://instalura-api.herokuapp.com/api/public/fotos/rafael')
+      //fetch('http://10.0.2.2:8080/api/fotos/rafael')
+      .then(response => response.json())
+      .then(json => this.setState({ fotos: json })
+      )
+    //alert(this.state.fotos)
+
+  }
+
+  buscaporId=(idFoto)=>{
+    const foto = this.state.fotos.find(foto => foto.id === idFoto)
+   // console.warn(foto)
+    return foto
+
+  }
+
+  atualizaFotos(fotoAtualizada){
+    const fotos = this.state.fotos.map(foto => foto.id === fotoAtualizada.id ? fotoAtualizada : foto)
+
+    return fotos
+  }
+
+  like = (idFoto) => {
+
+  //  const foto = this.state.fotos.find(foto => foto.id === idFoto)
+
+  //buscaporId(idFoto)
+  //  console.warn(idFoto)
+ // console.warn(this.buscaporId(idFoto))
+  const foto = this.buscaporId(idFoto)
+
+    let novaLista = []
+    if (!foto.likeada)
+      novaLista = [
+        ...foto.likers,
+        { login: 'brunavieira' }
+      ]
+    else
+      novaLista = foto.likers
+        .filter(liker => liker.login != 'brunavieira')
+
+    const fotoAtualizada = {
+      ...foto,
+      likeada: !foto.likeada,
+      likers: novaLista
+    }
+
+    const fotos = this.atualizaFotos(fotoAtualizada)
+    this.setState({
+      fotos
+    })
+  }
+
+  adicionaComentario = (idFoto, valorComentario) => {
+
+    if (valorComentario === '')
+      return
+
+      const foto = this.buscaporId(idFoto)
+
+   // const foto = this.state.fotos.find(foto => foto.id === idFoto)
+
+
+
+    const novaLista = [...foto.comentarios, {
+      id: valorComentario,
+      login: 'meuUsuario',
+      texto: valorComentario
+    }]
+
+
+    const fotoAtualizada = {
+      ...foto,
+      comentarios: novaLista
+    }
+
+   // const fotos = this.state.fotos.map(foto => foto.id === fotoAtualizada.id ? fotoAtualizada : foto)
+      const fotos= this.atualizaFotos(fotoAtualizada)
+    this.setState({ fotos })
+  }
+
+
 
   render() {
-    if(this.state.status !== 'NORMAL') {
-      return (
-        <TouchableOpacity style={styles.container}
-            onPress={this.carregaFotos.bind(this)}>
-          <Text style={[styles.texto, styles.titulo]}>Ops!</Text>
-          <Text style={styles.texto}>Não foi possível carregar o feed.</Text>
-          <Text style={styles.texto}>Toque para tentar novamente</Text>
-        </TouchableOpacity>
-      );
-    }
+
+    /* const fotos = [
+      { id: 1, usuario: 'bruna' },
+      { id: 2, usuario: 'dani' },
+      { id: 3, usuario: 'ju' },
+      { id: 4, usuario: 'shirley' }
+    ] */
 
     return (
-      <View>
-        {this.exibeUsuarioInfo()}
-        {this.state.fotos.map(foto =>
-          <Post key={foto.id}
-            foto={foto}
-            likeCallback={this.like.bind(this)}
-            comentaCallback={this.comenta.bind(this)}
-            verPerfilCallback={this.verPerfil.bind(this)}
-          />
-        )}
-      </View>
+      /*  <ScrollView style={{marginTop: 20}}>     
+ 
+       {fotos.map(foto =>
+       <View key={foto.id}>
+       <Text> {foto.usuario} </Text>
+       <Image source={require('./resources/img/alura.jpg')}
+       style={{width: screen.width, height: screen.width}}/>
+       </View>
+       )}
+ 
+       </ScrollView> */
+
+      <FlatList
+        data={this.state.fotos}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) =>
+
+          <Post foto={item}
+            likeCallBack={this.like} 
+            comentarioCallBack={this.adicionaComentario}/>
+
+        }
+      />
+
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  texto: {
-    color: '#7f8c8d',
-    fontSize: 20
-  },
-  titulo: {
-    fontWeight: 'bold',
-    fontSize: 26
-  }
-});

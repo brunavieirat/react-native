@@ -1,83 +1,134 @@
 import React, { Component } from 'react';
 import {
+  AppRegistry,
   StyleSheet,
   Text,
   View,
   Image,
-  TextInput,
   Dimensions,
+  ScrollView,
   TouchableOpacity,
+  TextInput
 } from 'react-native';
-import Likes from './Likes';
-import Comentario from './Comentario';
-import InputComentario from './InputComentario';
+import InputComentario from './InputComentario'
+import Like from './Likes'
+
 
 export default class Post extends Component {
 
-  exibeLegenda(foto) {
-    if(foto.comentario === "")
-      return;
+  /* /* constructor(props) {
+    super(props)
+    this.state = {
+      foto: this.props.foto,
 
-    return <Comentario usuario={foto.loginUsuario} texto={foto.comentario} />
+    } 
+  } */
+
+  
+ 
+
+  exibeLegenda = (foto) => {
+    if (foto.comentario === '')
+      return
+
+    return (
+      <View style={styles.comentario}>
+        <Text style={styles.tituloComentario}>{foto.loginUsuario}</Text>
+        <Text> {foto.comentario}</Text>
+
+      </View>
+    )
   }
 
+  
+
   render() {
-    const { foto } = this.props;
+    const {foto, likeCallBack, comentarioCallBack} = this.props
+
+   // const { foto } = this.state
+
     return (
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.cabecalho}
-            onPress={() => this.props.verPerfilCallback(foto)}>
-          <Image style={styles.fotoPerfil}
-              source={{uri: foto.urlPerfil}} />
-          <Text>{foto.loginUsuario}</Text>
-        </TouchableOpacity>
 
-        <Image style={styles.foto}
-            source={{uri: foto.urlFoto}} />
+      <View>
 
-        <View style={styles.rodape}>
-          <Likes foto={foto} likeCallback={this.props.likeCallback}/>
+        <View style={styles.header}>
+          <Image source={{ uri: 'https://avatars2.githubusercontent.com/u/32556458?s=460&v=4' }}
+            style={styles.profilePicture} />
+          <Text> {foto.loginUsuario} </Text>
+        </View>
+        <Image source={{ uri: foto.urlFoto }}
+          style={styles.postImage} />
 
-          {this.exibeLegenda(foto)}
+        <View style={styles.rodape}>          
+        
+          <View>
+          <Like foto={foto} likeCallBack={() => likeCallBack(foto.id)} />
+            {this.exibeLegenda(foto)}
 
-          {foto.comentarios.map(comentario =>
-            <Comentario
-                key={comentario.id}
-                usuario={comentario.login}
-                texto={comentario.texto} />
-          )}
+            {foto.comentarios.map(comentario =>
+              <View style={styles.comentario} key={comentario.id}>
+                <Text style={styles.tituloComentario}>{comentario.login}</Text>
+                <Text> {comentario.texto}</Text>
 
-          <InputComentario idFoto={foto.id} comentaCallback={this.props.comentaCallback}/>
+              </View>
+
+            )}
+
+          </View>
+
+          <InputComentario
+            idFoto={foto.id}
+            comentarioCallBack={comentarioCallBack}
+          />
+
         </View>
       </View>
-    );
+    )
   }
 }
 
-const width = Dimensions.get('window').width;
+
+const screen = Dimensions.get('screen')
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginBottom: 5
-  },
-  cabecalho: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+  header: {
     margin: 10,
-    height: 40
+    flexDirection: 'row',
+    alignItems: 'center'
   },
-  fotoPerfil: {
+
+  profilePicture: {
     marginRight: 10,
-    height: 40,
     width: 40,
+    height: 40,
     borderRadius: 20
   },
-  foto: {
-    width: width,
-    height: width
-  },
+
+  postImage: {
+    width: screen.width,
+    height: screen.width
+  }, 
+
   rodape: {
     margin: 10,
+
   },
+
+  curtidas: {
+    fontWeight: 'bold',
+
+
+  },
+
+
+  comentario: {
+    flexDirection: 'row',
+    marginLeft: 5
+  },
+
+  tituloComentario: {
+    fontWeight: 'bold',
+    marginRight: 5
+  }
+
 });
