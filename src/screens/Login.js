@@ -55,7 +55,7 @@ export default class Login extends Component {
 
                 //console.warn(token)
                 AsyncStorage.setItem('usuario', JSON.stringify(usuario))
-                console.warn('OK')
+               // console.warn('OK')
                 //    AsyncStorage.setItem('usuario', this.state.usuario)
 
                 /*  AsyncStorage.getItem('usuario')
@@ -63,6 +63,11 @@ export default class Login extends Component {
                  .then(usuario =>{console.warn(usuario.nome)}) */
 
                  //Navegando para o Feed
+
+                 this.props.navigator.push({
+                     screen: 'Feed',
+                     title: 'Feed'
+                 })
             })
             .catch(error => {
                 this.setState({ validacao: error.message })
